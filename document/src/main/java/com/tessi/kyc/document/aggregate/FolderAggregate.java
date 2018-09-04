@@ -1,16 +1,15 @@
 package com.tessi.kyc.document.aggregate;
 
 import com.tessi.kyc.document.command.DocumentCreateCommand;
-import com.tessi.kyc.document.repository.FolderRepository;
+import com.tessi.kyc.document.command.FolderCreateCommand;
 import com.tessi.kyc.event.DocumentCreatedEvent;
+import com.tessi.kyc.event.FolderCreatedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
-import org.axonframework.commandhandling.model.Repository;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.UUID;
@@ -18,41 +17,35 @@ import java.util.UUID;
 import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
 
 @Aggregate
-public class DocumentAggregate {
+public class FolderAggregate {
 
-    private final static Logger LOG = LoggerFactory.getLogger(DocumentAggregate.class);
+    private final static Logger LOG = LoggerFactory.getLogger(FolderAggregate.class);
 
     @AggregateIdentifier
-    private UUID documentId;
-
     private UUID folderId;
 
-    private UUID documentTypeId;
+    private UUID folderTypeId;
 
     private Date dateCreate;
 
     private String status;
 
-    public DocumentAggregate() {
+    public FolderAggregate() {
     }
 
     @CommandHandler
-    public DocumentAggregate(DocumentCreateCommand command, FolderRepository folderRepository) {
+    public FolderAggregate(FolderCreateCommand command) {
         LOG.info("CommandHandler {}", command);
 
-        if(folderRepository.findByUuid(command.getFolderId().toString()) == null) {
-            throw new RuntimeException("not found "+command.getFolderId().toString());
-        }
-
-        apply(new DocumentCreatedEvent(command.getId(), command.getDocumentTypeId(), new Date()));
+        apply(new FolderCreatedEvent(command.getId(), command.getFolderTypeId(), new Date()));
     }
 
     @EventSourcingHandler
-    public void on(DocumentCreatedEvent event) {
+    public void on(FolderCreatedEvent event) {
         LOG.info("EventSourcingHandler {}", event);
 
-        this.documentId = event.getId();
-        this.documentTypeId = event.getDocumentTypeId();
+        this.folderId = event.getId();
+        this.folderTypeId = event.getFolderTypeId();
         this.dateCreate = event.getDateCreated();
         this.status = "CREATED";
     }

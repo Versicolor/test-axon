@@ -1,6 +1,9 @@
 package com.tessi.kyc.document;
 
 import com.tessi.kyc.document.aggregate.DocumentAggregate;
+import com.tessi.kyc.document.aggregate.FolderAggregate;
+import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.commandhandling.gateway.DefaultCommandGateway;
 import org.axonframework.commandhandling.model.Repository;
 import org.axonframework.config.EventProcessingConfiguration;
 import org.axonframework.config.SagaConfiguration;
@@ -30,12 +33,12 @@ public class DocumentApplication {
         config.usingTrackingProcessors();
     }
 
-    /*@Bean
-    public Repository<DocumentAggregate> complaintAggregateRepository(EventStore eventStore, SnapshotTriggerDefinition snapshotTriggerDefinition) {
-        return new EventSourcingRepository<>(DocumentAggregate.class, eventStore, snapshotTriggerDefinition);
+    @Bean
+    public Repository<FolderAggregate> folderAggregateRepository(EventStore eventStore/*, SnapshotTriggerDefinition snapshotTriggerDefinition*/) {
+        return new EventSourcingRepository<>(FolderAggregate.class, eventStore/*, snapshotTriggerDefinition*/);
     }
 
-    @Bean
+    /*@Bean
     public SpringAggregateSnapshotterFactoryBean snapshotter() {
         return new SpringAggregateSnapshotterFactoryBean();
     }
