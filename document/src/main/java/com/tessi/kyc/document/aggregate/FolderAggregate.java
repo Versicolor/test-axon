@@ -1,8 +1,6 @@
 package com.tessi.kyc.document.aggregate;
 
-import com.tessi.kyc.document.command.DocumentCreateCommand;
 import com.tessi.kyc.document.command.FolderCreateCommand;
-import com.tessi.kyc.event.DocumentCreatedEvent;
 import com.tessi.kyc.event.FolderCreatedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;

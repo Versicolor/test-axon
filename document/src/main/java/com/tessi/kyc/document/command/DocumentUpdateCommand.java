@@ -6,10 +6,9 @@ import org.axonframework.commandhandling.TargetAggregateIdentifier;
 import java.util.UUID;
 
 @Value
-public class FolderCreateCommand {
+public class DocumentUpdateCommand {
 
     @TargetAggregateIdentifier
-    private final UUID id;
-    private final UUID folderTypeId;
-
+    private UUID id;
+    private String name;
 }

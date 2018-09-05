@@ -1,14 +1,11 @@
 package com.tessi.kyc.document.controller;
 
-import com.tessi.kyc.document.aggregate.FolderAggregate;
 import com.tessi.kyc.document.command.DocumentCreateCommand;
+import com.tessi.kyc.document.command.DocumentUpdateCommand;
+import com.tessi.kyc.document.controller.dto.DocumentDto;
+import com.tessi.kyc.document.controller.dto.DocumentDtoName;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.commandhandling.model.Repository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -24,21 +21,14 @@ public class DocumentController {
     }
 
     @PostMapping
-    public CompletableFuture<Object> createDocument(@RequestBody DocumentPost document) {
+    public CompletableFuture<Object> createDocument(@RequestBody DocumentDto document) {
 
         UUID id = UUID.randomUUID();
-        return commandGateway.send(new DocumentCreateCommand(id, document.getFolderId(), document.getDocumentTypeId()))
-                .handle((ok, exception) -> {
+        return commandGateway.send(new DocumentCreateCommand(id, document.getFolderId(), document.getDocumentTypeId(), document.getName()));
+    }
 
-                    if(exception!=null) {
-                        return exception.getMessage();
-                    }
-
-                    if(ok!=null) {
-                        return ok;
-                    }
-
-                    return "should not happen";
-        });
+    @PutMapping
+    public void updateDocument(@RequestBody DocumentDtoName documentDtoName) {
+        commandGateway.send(new DocumentUpdateCommand(documentDtoName.getId(), documentDtoName.getName()));
     }
 }

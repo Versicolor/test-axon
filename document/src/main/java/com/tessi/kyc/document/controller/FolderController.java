@@ -2,6 +2,7 @@ package com.tessi.kyc.document.controller;
 
 import com.tessi.kyc.document.command.DocumentCreateCommand;
 import com.tessi.kyc.document.command.FolderCreateCommand;
+import com.tessi.kyc.document.controller.dto.FolderDto;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,17 +23,17 @@ public class FolderController {
     }
 
     @PostMapping
-    public CompletableFuture<String> createFolder(@RequestBody FolderPost folder) {
+    public CompletableFuture<String> createFolder(@RequestBody FolderDto folder) {
         UUID id = UUID.randomUUID();
         return commandGateway.send(new FolderCreateCommand(id, folder.getFolderTypeId()));
     }
 
     @PostMapping("/doc")
-    public CompletableFuture<Object> createFolderAndDocument(@RequestBody FolderPost folder) throws InterruptedException {
+    public CompletableFuture<Object> createFolderAndDocument(@RequestBody FolderDto folder) throws InterruptedException {
         UUID id = UUID.randomUUID();
         UUID folderId = commandGateway.sendAndWait(new FolderCreateCommand(id, folder.getFolderTypeId()));
         Thread.sleep(folder.getSleep());
-        return commandGateway.send(new DocumentCreateCommand(UUID.randomUUID(), folderId, folder.getFolderTypeId()))
+        return commandGateway.send(new DocumentCreateCommand(UUID.randomUUID(), folderId, folder.getFolderTypeId(), "toto"))
                 .handle((ok, exception) -> {
 
                     if(exception!=null) {
