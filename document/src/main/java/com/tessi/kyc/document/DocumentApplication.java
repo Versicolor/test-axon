@@ -7,6 +7,8 @@ import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.model.Repository;
 import org.axonframework.common.transaction.TransactionManager;
 import org.axonframework.config.EventProcessingConfiguration;
+import org.axonframework.eventsourcing.EventSourcingRepository;
+import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.monitoring.NoOpMessageMonitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -30,19 +32,16 @@ public class DocumentApplication {
     }
 
     @Bean
-    public CommandBus commandBus(TransactionManager transactionManager) {
-        return new AsynchronousCommandBus(Executors.newCachedThreadPool(), transactionManager, NoOpMessageMonitor.INSTANCE);
-    }
-
-    @Autowired
-    public void configureCommandBus(CommandBus commandBus, Repository<FolderAggregate> folderAggregateRepository) {
+    public CommandBus commandBus(TransactionManager transactionManager, Repository<FolderAggregate> folderAggregateRepository) {
+        CommandBus commandBus = new AsynchronousCommandBus(Executors.newCachedThreadPool(), transactionManager, NoOpMessageMonitor.INSTANCE);
         commandBus.registerHandlerInterceptor(new DocumentCreateCommandInterceptor(folderAggregateRepository));
+        return commandBus;
     }
 
-    //@Bean
-    //public Repository<FolderAggregate> folderAggregateRepository(EventStore eventStore/*, SnapshotTriggerDefinition snapshotTriggerDefinition*/) {
-    //    return new EventSourcingRepository<>(FolderAggregate.class, eventStore/*, snapshotTriggerDefinition*/);
-    //}
+    @Bean
+    public Repository<FolderAggregate> folderAggregateRepository(EventStore eventStore/*, SnapshotTriggerDefinition snapshotTriggerDefinition*/) {
+        return new EventSourcingRepository<FolderAggregate>(FolderAggregate.class, eventStore/*, snapshotTriggerDefinition*/);
+    }
 
     /*@Bean
     public SpringAggregateSnapshotterFactoryBean snapshotter() {
