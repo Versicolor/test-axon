@@ -1,16 +1,12 @@
 package com.tessi.kyc.event;
 
+import lombok.Value;
+
 import java.util.UUID;
 
+@Value
 public class ControlsCreatedEvent {
 
     private final UUID documentId;
 
-    public ControlsCreatedEvent(UUID documentId) {
-        this.documentId = documentId;
-    }
-
-    public UUID getDocumentId() {
-        return documentId;
-    }
 }

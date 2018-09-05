@@ -6,10 +6,9 @@ import java.util.Date;
 import java.util.UUID;
 
 @Value
-public class FolderCreatedEvent {
+public class DocumentUpdatedEvent {
 
     private UUID id;
-    private UUID folderTypeId;
-    private Date dateCreated;
+    private String name;
 
 }
