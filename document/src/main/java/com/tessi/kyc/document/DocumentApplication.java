@@ -34,10 +34,10 @@ public class DocumentApplication {
         return new AsynchronousCommandBus(Executors.newCachedThreadPool(), transactionManager, NoOpMessageMonitor.INSTANCE);
     }
 
-    //@Autowired
-    //public void configureCommandBus(CommandBus commandBus, Repository<FolderAggregate> folderAggregateRepository) {
-    //    commandBus.registerHandlerInterceptor(new DocumentCreateCommandInterceptor(folderAggregateRepository));
-    //}
+    @Autowired
+    public void configureCommandBus(CommandBus commandBus, Repository<FolderAggregate> folderAggregateRepository) {
+        commandBus.registerHandlerInterceptor(new DocumentCreateCommandInterceptor(folderAggregateRepository));
+    }
 
     //@Bean
     //public Repository<FolderAggregate> folderAggregateRepository(EventStore eventStore/*, SnapshotTriggerDefinition snapshotTriggerDefinition*/) {
