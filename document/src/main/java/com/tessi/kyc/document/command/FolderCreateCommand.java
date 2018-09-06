@@ -9,7 +9,7 @@ import java.util.UUID;
 public class FolderCreateCommand {
 
     @TargetAggregateIdentifier
-    private final UUID id;
+    private final UUID folderId;
     private final UUID folderTypeId;
 
 }

@@ -1,9 +1,12 @@
 package com.tessi.kyc.document.controller;
 
+import com.tessi.kyc.document.aggregate.DocumentAggregate;
 import com.tessi.kyc.document.command.DocumentCreateCommand;
 import com.tessi.kyc.document.command.FolderCreateCommand;
 import com.tessi.kyc.document.controller.dto.FolderDto;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,8 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 public class FolderController {
 
+    private final static Logger LOG = LoggerFactory.getLogger(DocumentAggregate.class);
+
     private final CommandGateway commandGateway;
 
     public FolderController(CommandGateway commandGateway) {
@@ -25,6 +30,7 @@ public class FolderController {
     @PostMapping
     public CompletableFuture<String> createFolder(@RequestBody FolderDto folder) {
         UUID id = UUID.randomUUID();
+        LOG.info("Create folder {}", id);
         return commandGateway.send(new FolderCreateCommand(id, folder.getFolderTypeId()));
     }
 

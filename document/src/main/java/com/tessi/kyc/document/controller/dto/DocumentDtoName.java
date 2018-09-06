@@ -7,6 +7,8 @@ import java.util.UUID;
 @Value
 public class DocumentDtoName {
 
+    private UUID folderId;
+
     private UUID id;
 
     private String name;

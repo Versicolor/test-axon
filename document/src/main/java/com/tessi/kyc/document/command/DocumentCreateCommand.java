@@ -8,10 +8,13 @@ import java.util.UUID;
 @Value
 public class DocumentCreateCommand {
 
+    private final UUID documentId;
+
     @TargetAggregateIdentifier
-    private final UUID id;
     private final UUID folderId;
+
     private final UUID documentTypeId;
+
     private final String name;
 
 }

@@ -21,14 +21,15 @@ public class DocumentController {
     }
 
     @PostMapping
-    public CompletableFuture<Object> createDocument(@RequestBody DocumentDto document) {
+    public UUID createDocument(@RequestBody DocumentDto document) {
 
         UUID id = UUID.randomUUID();
-        return commandGateway.send(new DocumentCreateCommand(id, document.getFolderId(), document.getDocumentTypeId(), document.getName()));
+        commandGateway.sendAndWait(new DocumentCreateCommand(id, document.getFolderId(), document.getDocumentTypeId(), document.getName()));
+        return id;
     }
 
     @PutMapping
     public void updateDocument(@RequestBody DocumentDtoName documentDtoName) {
-        commandGateway.send(new DocumentUpdateCommand(documentDtoName.getId(), documentDtoName.getName()));
+        commandGateway.sendAndWait(new DocumentUpdateCommand(documentDtoName.getFolderId(), documentDtoName.getId(), documentDtoName.getName()));
     }
 }

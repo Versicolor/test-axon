@@ -4,9 +4,11 @@ import com.tessi.kyc.document.command.DocumentCreateCommand;
 import com.tessi.kyc.document.command.DocumentUpdateCommand;
 import com.tessi.kyc.event.DocumentCreatedEvent;
 import com.tessi.kyc.event.DocumentUpdatedEvent;
+import lombok.Value;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.CommandHandlerInterceptor;
+import org.axonframework.commandhandling.model.EntityId;
 import org.axonframework.commandhandling.model.Repository;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.messaging.InterceptorChain;
@@ -19,63 +21,51 @@ import java.util.UUID;
 
 import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
 
-@Aggregate
 public class DocumentAggregate {
 
     private final static Logger LOG = LoggerFactory.getLogger(DocumentAggregate.class);
 
-    @AggregateIdentifier
-    private UUID documentId;
+    @EntityId
+    public UUID documentId;
 
-    private UUID folderId;
+    public UUID folderId;
 
-    private UUID documentTypeId;
+    public UUID documentTypeId;
 
-    private Date dateCreate;
+    public Date dateCreate;
 
-    private String name;
+    public String name;
 
-    private String status;
+    public String status;
 
-    public DocumentAggregate() {
+    public DocumentAggregate(UUID documentId, UUID folderId, UUID documentTypeId, Date dateCreate, String name, String status) {
+        this.documentId = documentId;
+        this.folderId = folderId;
+        this.documentTypeId = documentTypeId;
+        this.dateCreate = dateCreate;
+        this.name = name;
+        this.status = status;
     }
 
-    @CommandHandler
-    public DocumentAggregate(DocumentCreateCommand command) {
-        LOG.info("CommandHandler {}", command);
+    //@CommandHandler
+   //public DocumentAggregate(DocumentCreateCommand command) {
+   //    LOG.info("CommandHandler {}", command);
 
-        apply(new DocumentCreatedEvent(command.getId(), command.getDocumentTypeId(), new Date(), command.getName()));
-    }
+   //    apply(new DocumentCreatedEvent(command.getId(), command.getDocumentTypeId(), new Date(), command.getName()));
+   //}
 
     @CommandHandler
     public void handle(DocumentUpdateCommand command) {
         LOG.info("CommandHandler {}", command);
 
-        try {
-            Thread.sleep(10000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        apply(new DocumentUpdatedEvent(command.getId(), command.getName()));
-    }
-
-    @EventSourcingHandler
-    public void on(DocumentCreatedEvent event) {
-        LOG.info("EventSourcingHandler {}", event);
-
-        this.documentId = event.getId();
-        this.documentTypeId = event.getDocumentTypeId();
-        this.dateCreate = event.getDateCreated();
-        this.name = event.getName();
-        this.status = "CREATED";
+        apply(new DocumentUpdatedEvent(command.getDocumentId(), command.getName()));
     }
 
     @EventSourcingHandler
     public void on(DocumentUpdatedEvent event) {
         LOG.info("EventSourcingHandler {}", event);
 
-        this.documentId = event.getId();
+        this.documentId = event.getDocumentId();
         this.name = event.getName();
     }
 }

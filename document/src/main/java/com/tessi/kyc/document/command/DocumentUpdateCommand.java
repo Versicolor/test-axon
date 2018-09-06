@@ -9,6 +9,9 @@ import java.util.UUID;
 public class DocumentUpdateCommand {
 
     @TargetAggregateIdentifier
-    private UUID id;
+    private UUID folderId;
+
+    private UUID documentId;
+
     private String name;
 }

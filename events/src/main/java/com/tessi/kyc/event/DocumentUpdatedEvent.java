@@ -8,7 +8,7 @@ import java.util.UUID;
 @Value
 public class DocumentUpdatedEvent {
 
-    private UUID id;
+    private UUID documentId;
     private String name;
 
 }
