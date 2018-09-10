@@ -1,0 +1,32 @@
+zuul:
+  routes:
+    poc-document:
+      path: /v1/document/**
+      sensitiveHeaders:
+  servlet-path: /file
+
+spring:
+  application:
+    name: poc-gateway
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds:  1 #dev only
+    lease-expiration-duration-in-seconds:  2 #dev only
+  client:
+    registerWithEureka: true
+    registry-fetch-interval-seconds: 1 #dev only
+    service-url:
+      defaultZone: http://kyc:8761/eureka
+    # for axon distributed routing
+    healthcheck:
+      enabled: true
+
+ribbon:
+  ServerListRefreshInterval: 500 #dev only
+  ReadTimeout: 60000
+
+#eureka:
+#  client:

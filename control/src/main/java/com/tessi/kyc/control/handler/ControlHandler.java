@@ -1,10 +1,8 @@
 package com.tessi.kyc.control.handler;
 
-import com.tessi.kyc.control.aggregate.ControlAggregate;
 import com.tessi.kyc.control.command.ControlCreateCommand;
 import com.tessi.kyc.event.ControlsCreatedEvent;
 import com.tessi.kyc.event.DocumentCreatedEvent;
-import com.tessi.kyc.event.LadExtractedEvent;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.EventHandler;

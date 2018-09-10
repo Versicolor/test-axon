@@ -1,10 +1,19 @@
 package com.tessi.kyc.document.controller;
 
+import com.tessi.kyc.document.aggregate.FolderAggregate;
 import com.tessi.kyc.document.command.DocumentCreateCommand;
 import com.tessi.kyc.document.command.DocumentUpdateCommand;
 import com.tessi.kyc.document.controller.dto.DocumentDto;
 import com.tessi.kyc.document.controller.dto.DocumentDtoName;
+import com.tessi.kyc.document.command.DocumentUpdateCommand;
+import com.tessi.kyc.document.command.UpdateDocStatusCommand;
+import com.tessi.kyc.document.controller.dto.DocumentDto;
+import com.tessi.kyc.document.controller.dto.DocumentDtoName;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -31,5 +40,10 @@ public class DocumentController {
     @PutMapping
     public void updateDocument(@RequestBody DocumentDtoName documentDtoName) {
         commandGateway.sendAndWait(new DocumentUpdateCommand(documentDtoName.getFolderId(), documentDtoName.getId(), documentDtoName.getName()));
+
+    }
+    @PostMapping("/status")
+    public CompletableFuture<Object> updateDocumentStatus(@RequestBody UpdateStatusRequest updateStatusRequest){
+        return commandGateway.send(new UpdateDocStatusCommand(updateStatusRequest.getFolderId(), updateStatusRequest.getDocumentId(), updateStatusRequest.getStatus()));
     }
 }
