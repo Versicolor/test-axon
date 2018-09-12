@@ -38,20 +38,20 @@ public class FolderController {
     public CompletableFuture<Object> createFolderAndDocument(@RequestBody FolderDto folder) throws InterruptedException {
         UUID id = UUID.randomUUID();
         UUID folderId = commandGateway.sendAndWait(new FolderCreateCommand(id, folder.getFolderTypeId()));
-        Thread.sleep(folder.getSleep());
-        return commandGateway.send(new DocumentCreateCommand(UUID.randomUUID(), folderId, folder.getFolderTypeId(), "toto"))
-                .handle((ok, exception) -> {
-
-                    if(exception!=null) {
-                        return exception.getMessage();
-                    }
-
-                    if(ok!=null) {
-                        return ok;
-                    }
-
-                    return "should not happen";
-                });
+//        Thread.sleep(folder.getSleep());
+        return commandGateway.send(new DocumentCreateCommand(UUID.randomUUID(), folderId, folder.getFolderTypeId(), "toto"));
+//                .handle((ok, exception) -> {
+//
+//                    if(exception!=null) {
+//                        return exception.getMessage();
+//                    }
+//
+//                    if(ok!=null) {
+//                        return ok;
+//                    }
+//
+//                    return "should not happen";
+//                });
     }
 
 

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
@@ -30,6 +31,9 @@ public class DocumentAggregate {
     public String name;
 
     public String status;
+
+    public DocumentAggregate() {
+    }
 
     public DocumentAggregate(UUID documentId, UUID folderId, UUID documentTypeId, Date dateCreate, String name, String status) {
         this.documentId = documentId;
@@ -53,5 +57,24 @@ public class DocumentAggregate {
 
         this.documentId = event.getDocumentId();
         this.name = event.getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DocumentAggregate that = (DocumentAggregate) o;
+        return Objects.equals(documentId, that.documentId) &&
+                Objects.equals(folderId, that.folderId) &&
+                Objects.equals(documentTypeId, that.documentTypeId) &&
+                Objects.equals(dateCreate, that.dateCreate) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(status, that.status);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(documentId, folderId, documentTypeId, dateCreate, name, status);
     }
 }

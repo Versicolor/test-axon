@@ -9,6 +9,6 @@ public class FolderDto {
 
     private UUID folderTypeId;
 
-    private long sleep;
+//    private long sleep;
 
 }

@@ -8,6 +8,7 @@ import com.tessi.kyc.document.repository.FolderRepository;
 import com.tessi.kyc.event.DocumentCreatedEvent;
 import com.tessi.kyc.event.DocumentUpdatedEvent;
 import com.tessi.kyc.event.FolderCreatedEvent;
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Component
+@ProcessingGroup("document")
 public class FolderEventHandler {
 
     private final static Logger LOG = LoggerFactory.getLogger(FolderEventHandler.class);

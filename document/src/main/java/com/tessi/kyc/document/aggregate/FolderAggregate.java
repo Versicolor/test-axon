@@ -14,10 +14,7 @@ import org.axonframework.spring.stereotype.Aggregate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
 
@@ -77,6 +74,23 @@ public class FolderAggregate {
     public void on(DocumentCreatedEvent event) {
         LOG.info("EventSourcingHandler {}", event);
         documents.add(new DocumentAggregate(event.getDocumentId(), folderId, event.getDocumentTypeId(), event.getDateCreated(), event.getName(), event.getStatus()));
-        ;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FolderAggregate that = (FolderAggregate) o;
+        return Objects.equals(folderId, that.folderId) &&
+                Objects.equals(folderTypeId, that.folderTypeId) &&
+                Objects.equals(dateCreate, that.dateCreate) &&
+                Objects.equals(status, that.status) &&
+                Objects.equals(documents, that.documents);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(folderId, folderTypeId, dateCreate, status, documents);
     }
 }
