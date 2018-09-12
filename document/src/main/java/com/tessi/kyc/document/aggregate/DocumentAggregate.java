@@ -47,13 +47,6 @@ public class DocumentAggregate {
         this.status = status;
     }
 
-    //@CommandHandler
-   //public DocumentAggregate(DocumentCreateCommand command) {
-   //    LOG.info("CommandHandler {}", command);
-
-   //    apply(new DocumentCreatedEvent(command.getId(), command.getDocumentTypeId(), new Date(), command.getName()));
-   //}
-
     @CommandHandler
     public void handle(DocumentUpdateCommand command) {
         LOG.info("CommandHandler {}", command);
