@@ -1,9 +1,12 @@
 package com.tessi.kyc.user.aggregate;
 
 import com.tessi.kyc.event.UserCreatedEvent;
+import com.tessi.kyc.event.UserDeletedEvent;
 import com.tessi.kyc.user.command.UserCreateCommand;
+import com.tessi.kyc.user.command.UserDeleteCommand;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
+import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.slf4j.Logger;
@@ -35,6 +38,13 @@ public class UserAggregate {
         apply(new UserCreatedEvent(command.getId(), command.getUsername(), command.getPassword()));
     }
 
+    @CommandHandler
+    public void on(UserDeleteCommand command) {
+        LOG.info("CommandHandler {}", command);
+
+        apply(new UserDeletedEvent(command.getId()));
+    }
+
     @EventSourcingHandler
     public void on(UserCreatedEvent event) {
         LOG.info("EventSourcingHandler {}", event);
@@ -42,5 +52,12 @@ public class UserAggregate {
         this.userId = event.getId();
         this.username = event.getUsername();
         this.password = event.getPassword();
+    }
+
+    @EventSourcingHandler
+    public void on(UserDeletedEvent event) {
+        LOG.info("EventSourcingHandler {}", event);
+
+        AggregateLifecycle.markDeleted();
     }
 }

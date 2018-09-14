@@ -1,16 +1,16 @@
 package com.tessi.kyc.user.controller;
 
 import com.tessi.kyc.user.command.UserCreateCommand;
+import com.tessi.kyc.user.command.UserDeleteCommand;
 import com.tessi.kyc.user.dto.UserDto;
 import com.tessi.kyc.user.repository.UserRepository;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.config.EventProcessingConfiguration;
+import org.axonframework.eventhandling.TrackingEventProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -26,6 +26,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EventProcessingConfiguration eventProcessingConfiguration;
+
     @PostMapping
     public UUID createUser(@RequestBody UserDto userDto) {
 
@@ -38,5 +41,20 @@ public class UserController {
         commandGateway.sendAndWait(new UserCreateCommand(id, userDto.getUsername(), userDto.getPassword()));
         LOG.info("End create user");
         return id;
+    }
+
+    @DeleteMapping
+    public void deleteUser(@RequestBody UUID uuid) {
+        commandGateway.sendAndWait(new UserDeleteCommand(uuid));
+    }
+
+    @PostMapping("/reset")
+    public void resetUserView() {
+        userRepository.deleteAll();
+        eventProcessingConfiguration.eventProcessorByProcessingGroup("com.tessi.kyc.user.handler", TrackingEventProcessor.class).ifPresent(trackingEventProcessor -> {
+            trackingEventProcessor.shutDown();
+            trackingEventProcessor.resetTokens();
+            trackingEventProcessor.start();
+        });
     }
 }
