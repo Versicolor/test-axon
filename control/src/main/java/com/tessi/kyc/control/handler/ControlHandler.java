@@ -1,24 +1,34 @@
 package com.tessi.kyc.control.handler;
 
-import com.tessi.kyc.control.command.ControlCreateCommand;
-import com.tessi.kyc.event.ControlsCreatedEvent;
+import com.google.common.collect.Lists;
+import com.tessi.kyc.control.query.entity.Document;
+import com.tessi.kyc.control.query.entity.Field;
+import com.tessi.kyc.control.query.repository.ControlRepository;
+import com.tessi.kyc.control.query.repository.DocumentRepository;
 import com.tessi.kyc.event.DocumentCreatedEvent;
+import com.tessi.kyc.event.FieldsExtractedEvent;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.EventHandler;
-import org.axonframework.eventhandling.GenericEventMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.util.List;
 
 @Component
+@ProcessingGroup("control")
 public class ControlHandler {
 
     private final static Logger LOG = LoggerFactory.getLogger(ControlHandler.class);
+
+    @Autowired
+    private ControlRepository controlRepository;
+
+    @Autowired
+    private DocumentRepository documentRepository;
 
     @Autowired
     private CommandGateway commandGateway;
@@ -26,21 +36,28 @@ public class ControlHandler {
     @Autowired
     private EventBus eventBus;
 
-    private UUID controlType1 = UUID.fromString("3f696107-a820-4231-a1ca-deccb8768f7d");
-    private UUID controlType2 = UUID.fromString("19af2f6a-d463-4426-b983-a1cb09a33854");
+    @EventHandler
+    public void on(FieldsExtractedEvent event){
+        LOG.info("SIMPLE EVENT HANDLER: Received FieldsExtractedEvent {}", event);
+        Document document = documentRepository.findByDocumentId(event.getDocumentId());
+
+        List<Field> fields = Lists.newArrayList();
+        event.getFields().forEach((k, v) -> {
+            Field f = new Field();
+            f.setFieldTypeId(k);
+            f.setValue(v);
+            f.setName("lol");
+            fields.add(f);
+        });
+//        document.setFields(fields);
+
+    }
 
     @EventHandler
-    @Transactional
     public void on(DocumentCreatedEvent documentCreatedEvent) {
 
-       LOG.info("Received DocumentCreatedEvent {}",documentCreatedEvent);
+        LOG.info("SIMPLE EVENT HANDLER: Received DocumentCreatedEvent {}",documentCreatedEvent);
 
-        ControlCreateCommand command1 = new ControlCreateCommand(UUID.randomUUID(), documentCreatedEvent.getDocumentId(), controlType1);
-        commandGateway.sendAndWait(command1);
 
-        ControlCreateCommand command2 = new ControlCreateCommand(UUID.randomUUID(), documentCreatedEvent.getDocumentId(), controlType2);
-        commandGateway.sendAndWait(command2);
-
-        eventBus.publish(GenericEventMessage.asEventMessage(new ControlsCreatedEvent(documentCreatedEvent.getDocumentId())));
     }
 }

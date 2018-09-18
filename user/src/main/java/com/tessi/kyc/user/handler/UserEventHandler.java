@@ -6,6 +6,7 @@ import com.tessi.kyc.user.command.UserDeleteCommand;
 import com.tessi.kyc.user.entity.User;
 import com.tessi.kyc.user.repository.UserRepository;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.eventhandling.ReplayStatus;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@ProcessingGroup("user")
 public class UserEventHandler {
 
     private final static Logger LOG = LoggerFactory.getLogger(UserEventHandler.class);
@@ -26,7 +28,6 @@ public class UserEventHandler {
     private CommandGateway commandGateway;
 
     @EventHandler
-    @Transactional
     public void on(UserCreatedEvent userCreatedEvent, ReplayStatus replayStatus) {
 
         LOG.info("Create user view {}", userCreatedEvent.getId());

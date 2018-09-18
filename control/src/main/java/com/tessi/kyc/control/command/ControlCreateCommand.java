@@ -1,9 +1,12 @@
 package com.tessi.kyc.control.command;
 
+import org.axonframework.commandhandling.TargetAggregateIdentifier;
+
 import java.util.UUID;
 
 public class ControlCreateCommand {
 
+    @TargetAggregateIdentifier
     private final UUID id;
     private final UUID documentId;
     private final UUID controlTypeId;

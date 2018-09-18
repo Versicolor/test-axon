@@ -8,7 +8,7 @@ import java.util.UUID;
 @Value
 public class FolderCreatedEvent {
 
-    private UUID id;
+    private UUID folderId;
     private UUID folderTypeId;
     private Date dateCreated;
 

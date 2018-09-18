@@ -1,23 +1,18 @@
-zuul:
-  routes:
-    poc-control:
-      path: /v1/control/**
-      sensitiveHeaders:
-    poc-document:
-      path: /v1/document/**
-      sensitiveHeaders:
-    poc-user:
-      path: /v1/users/**
-      sensitiveHeaders:
-  servlet-path: /file
-
 spring:
   application:
-    name: poc-gateway
+    name: poc-user
+  datasource:
+    url: jdbc:mysql://192.168.99.100/axon-poc
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 eureka:
   instance:
     instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    hostname: kyc
     prefer-ip-address: true
     lease-renewal-interval-in-seconds:  1 #dev only
     lease-expiration-duration-in-seconds:  2 #dev only
@@ -26,7 +21,6 @@ eureka:
     registry-fetch-interval-seconds: 1 #dev only
     service-url:
       defaultZone: http://kyc:8761/eureka
-    # for axon distributed routing
     healthcheck:
       enabled: true
 
@@ -34,5 +28,9 @@ ribbon:
   ServerListRefreshInterval: 500 #dev only
   ReadTimeout: 60000
 
-#eureka:
-#  client:
+server:
+  port: 0
+
+axon:
+  distributed:
+    enabled: true

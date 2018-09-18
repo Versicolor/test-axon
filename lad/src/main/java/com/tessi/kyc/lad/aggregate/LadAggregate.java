@@ -1,8 +1,8 @@
 package com.tessi.kyc.lad.aggregate;
 
+import com.tessi.kyc.event.ExtractFieldsCommand;
 import com.tessi.kyc.event.LadCreatedEvent;
 import com.tessi.kyc.event.LadExtractedEvent;
-import com.tessi.kyc.lad.command.LadCreateCommand;
 import com.tessi.kyc.lad.command.LadExtractionCommand;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
@@ -22,7 +22,7 @@ public class LadAggregate {
     private final static Logger LOG = LoggerFactory.getLogger(LadAggregate.class);
 
     @AggregateIdentifier
-    private UUID id;
+    private UUID ladId;
 
     private UUID documentId;
 
@@ -35,11 +35,18 @@ public class LadAggregate {
     public LadAggregate() {
     }
 
+//    @CommandHandler
+//    public LadAggregate(LadCreateCommand command) {
+//        LOG.info("CommandHandler {}", command);
+//
+//        apply(new LadCreatedEvent(command.getControlId(), command.getDocumentId(), new Date()));
+//    }
+
     @CommandHandler
-    public LadAggregate(LadCreateCommand command) {
+    public LadAggregate(ExtractFieldsCommand command) {
         LOG.info("CommandHandler {}", command);
 
-        apply(new LadCreatedEvent(command.getId(), command.getDocumentId(), new Date()));
+        apply(new LadCreatedEvent(command.getLadId(), command.getDocumentId(), new Date()));
     }
 
     @CommandHandler
@@ -60,7 +67,7 @@ public class LadAggregate {
     public void on(LadCreatedEvent event) {
         LOG.info("EventSourcingHandler {}", event);
 
-        this.id = event.getId();
+        this.ladId = event.getId();
         this.documentId = event.getId();
         this.status = "CREATED";
     }
@@ -69,7 +76,7 @@ public class LadAggregate {
     public void on(LadExtractedEvent event) {
         LOG.info("EventSourcingHandler {}", event);
 
-        this.id = event.getId();
+        this.ladId = event.getId();
         this.status = "EXTRACTED";
         this.dateEnd = event.getDateExtracted();
     }

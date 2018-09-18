@@ -1,7 +1,9 @@
 package com.tessi.kyc.control.aggregate;
 
 import com.tessi.kyc.control.command.ControlCreateCommand;
+import com.tessi.kyc.control.command.ControlExecuteCommand;
 import com.tessi.kyc.event.ControlCreatedEvent;
+import com.tessi.kyc.event.ControlFinishedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -20,7 +22,7 @@ public class ControlAggregate {
     private final static Logger LOG = LoggerFactory.getLogger(ControlAggregate.class);
 
     @AggregateIdentifier
-    private UUID id;
+    private UUID controlId;
 
     private UUID documentId;
 
@@ -39,19 +41,39 @@ public class ControlAggregate {
 
     @CommandHandler
     public ControlAggregate(ControlCreateCommand command) {
-        LOG.info("CommandHandler {}", command);
+        LOG.info("CONTROL AGGREGATE: Control -  ControlCreateCommand caught {}", command);
 
         apply(new ControlCreatedEvent(command.getId(), command.getDocumentId(), command.getControlTypeId(), new Date()));
     }
 
     @EventSourcingHandler
     public void on(ControlCreatedEvent event) {
-        LOG.info("EventSourcingHandler {}", event);
+        LOG.info("CONTROL AGGREGATE: Control -  ControlCreatedEvent caught {}", event);
 
-        this.id = event.getId();
+        this.controlId = event.getControlId();
         this.documentId = event.getDocumentId();
         this.dateCreate = event.getDateCreate();
         this.controlTypeId = event.getControlTypeId();
         this.status = "CREATED";
+    }
+
+    @EventSourcingHandler
+    public void on(ControlFinishedEvent event){
+        LOG.info("CONTROL AGGREGATE: Control -  ControlFinishedEvent caught {}", event);
+
+        this.status = event.getResult();
+        this.dateEnd = new Date();
+    }
+
+
+    @CommandHandler
+    public void on(ControlExecuteCommand command) throws InterruptedException {
+        LOG.info("CONTROL AGGREGATE: Control -  ControlExecuteCommand caught {}", command);
+
+        //TODO execute control
+        Thread.sleep(4000);
+        String result = "VALID";
+
+        apply(new ControlFinishedEvent(command.getDocumentId(), command.getControlId(), result));
     }
 }

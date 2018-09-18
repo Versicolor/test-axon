@@ -1,19 +1,13 @@
 package com.tessi.kyc.document.controller;
 
-import com.tessi.kyc.document.aggregate.FolderAggregate;
 import com.tessi.kyc.document.command.DocumentCreateCommand;
-import com.tessi.kyc.document.command.DocumentUpdateCommand;
-import com.tessi.kyc.document.controller.dto.DocumentDto;
-import com.tessi.kyc.document.controller.dto.DocumentDtoName;
 import com.tessi.kyc.document.command.DocumentUpdateCommand;
 import com.tessi.kyc.document.command.UpdateDocStatusCommand;
 import com.tessi.kyc.document.controller.dto.DocumentDto;
 import com.tessi.kyc.document.controller.dto.DocumentDtoName;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -23,6 +17,8 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 public class DocumentController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DocumentController.class);
+
     private final CommandGateway commandGateway;
 
     public DocumentController(CommandGateway commandGateway) {
@@ -31,7 +27,7 @@ public class DocumentController {
 
     @PostMapping
     public UUID createDocument(@RequestBody DocumentDto document) {
-
+        LOG.info("Document - creating document");
         UUID id = UUID.randomUUID();
         commandGateway.sendAndWait(new DocumentCreateCommand(id, document.getFolderId(), document.getDocumentTypeId(), document.getName()));
         return id;

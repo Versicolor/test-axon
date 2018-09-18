@@ -2,14 +2,16 @@ package com.tessi.kyc.document.aggregate;
 
 import com.tessi.kyc.document.command.DocumentUpdateCommand;
 import com.tessi.kyc.event.DocumentUpdatedEvent;
+import com.tessi.kyc.event.FieldsExtractedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.EntityId;
+import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
-import org.axonframework.spring.stereotype.Aggregate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -31,6 +33,8 @@ public class DocumentAggregate {
     public String name;
 
     public String status;
+
+    List<FieldEntity> fields;
 
     public DocumentAggregate() {
     }
@@ -57,6 +61,12 @@ public class DocumentAggregate {
 
         this.documentId = event.getDocumentId();
         this.name = event.getName();
+    }
+
+    @EventHandler
+    public void on(FieldsExtractedEvent event){
+        LOG.info("Document - FieldsExtractedEvent caught {}", event);
+        event.getFields().forEach((k, v) -> fields.add(new FieldEntity(k, "lol", v)));
     }
 
     @Override

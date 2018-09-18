@@ -64,7 +64,7 @@ public class FolderAggregate {
     public void on(FolderCreatedEvent event) {
         LOG.info("EventSourcingHandler {}", event);
 
-        this.folderId = event.getId();
+        this.folderId = event.getFolderId();
         this.folderTypeId = event.getFolderTypeId();
         this.dateCreate = event.getDateCreated();
         this.status = "CREATED";
